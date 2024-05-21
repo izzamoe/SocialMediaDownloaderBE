@@ -1,2 +1,8 @@
 name = "sosmedhehe"
 compatibility_date = "2024-05-17"
+
+
+
+kv_namespaces = [
+  { binding = "KV", id = "3db8e56334d04dcf9f08cc2da76bfe68" }
+]
