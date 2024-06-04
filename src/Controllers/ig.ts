@@ -22,7 +22,7 @@ type IGResponseData = {
 
 const IGDownload = async (url:string): Promise<IGResponseData> => {
     const myHeaders = new Headers();
-    myHeaders.append("X-RapidAPI-Key", "824dddee65msh76dbe040b14bfe4p12ab6ajsnc6532155d4f8");
+    myHeaders.append("X-RapidAPI-Key", "29b228e84amsh27a3561ae107732p14b690jsn3c3b672defbd");
     myHeaders.append("X-RapidAPI-Host", "social-media-video-downloader.p.rapidapi.com");
 
     const requestOptions = {
@@ -47,15 +47,30 @@ function formatResponse(data: IGResponseData): ResponseData {
     }
 
     const formattedLinks = data.links.map(link => {
-        let quality = link.quality.replace('render_', 'resolusi ')
-            .replace('hd_', 'resolusi ')
-            .replace('sd_', 'resolusi ');
+        let quality = link.quality.replace('render_', '')
+            .replace('hd_', '')
+            .replace('sd_', '').replace("_0", "")
+
+        // hilangkan array yang qualitynya sama dengan "0"
+
+
 
         return {
             quality: quality,
             link: link.link
         };
-    });
+
+    // gunakan reduce untuk menghilangkan duplikat kualitas
+
+    }).filter(link => link.quality !== "0").sort((a, b) => {
+        if (a.quality === "audio") return -1;
+        if (b.quality === "audio") return 1;
+        return parseInt(b.quality) - parseInt(a.quality);
+    }).reduce((unique: ResponseDataItem[], item: ResponseDataItem) => {
+        return unique.findIndex(link => link.quality === item.quality) < 0
+            ? [...unique, item]
+            : unique;
+    }, []);
 
     return {
         success: true,
